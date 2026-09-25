@@ -4,7 +4,7 @@
 // Sync/Review/Reveal actions, plus Create/Join Room. No renderer/window
 // needed -- Tray + native Menu + dialog + osascript prompts cover it.
 
-const { app, Tray, Menu, nativeImage, dialog } = require('electron');
+const { app, Tray, Menu, nativeImage, dialog, BrowserWindow } = require('electron');
 const { spawn, execFileSync } = require('child_process');
 const path = require('path');
 const lib = require('../lib');
@@ -102,6 +102,26 @@ function joinRoomFlow(refresh) {
   refresh();
 }
 
+function showScrollableWindow(title, lines, onUnmask) {
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const unmaskBtn = onUnmask ? `<button onclick="require('electron').ipcRenderer.send('unmask')" style="margin-top:12px;padding:6px 16px;cursor:pointer">Unmask</button>` : '';
+  const html = `<html><head><title>${esc(title)}</title><style>
+    body{font-family:monospace;font-size:13px;padding:16px;margin:0;background:#1e1e1e;color:#d4d4d4;word-break:break-all}
+    pre{white-space:pre-wrap;margin:0}
+    button{background:#333;color:#d4d4d4;border:1px solid #555;border-radius:4px;font-size:13px}
+    button:hover{background:#444}
+  </style></head><body><pre>${lines.map(esc).join('\n') || '(empty)'}</pre>${unmaskBtn}</body></html>`;
+  const win = new BrowserWindow({ width: 620, height: 500, title, webPreferences: { nodeIntegration: true, contextIsolation: false } });
+  win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+  win.setMenuBarVisibility(false);
+  if (onUnmask) {
+    const { ipcMain } = require('electron');
+    const handler = () => { win.close(); onUnmask(); };
+    ipcMain.once('unmask', handler);
+    win.on('closed', () => ipcMain.removeListener('unmask', handler));
+  }
+}
+
 function showDiff(name, reveal) {
   const history = lib.readHistory(name);
   if (!history.length) {
@@ -117,10 +137,7 @@ function showDiff(name, reveal) {
   if (reveal) {
     lib.appendHistory(name, { ts: Date.now(), values: last.values, diff: {}, reveal: Object.keys(last.diff) });
   }
-  dialog.showMessageBox({
-    title: `${name} -- last change ${new Date(last.ts).toISOString()}`,
-    message: lines.join('\n') || '(no changes)',
-  });
+  showScrollableWindow(`${name} -- last change ${new Date(last.ts).toISOString()}`, lines);
 }
 
 function showPreview(name, reveal) {
@@ -130,13 +147,11 @@ function showPreview(name, reveal) {
   if (reveal) {
     lib.appendHistory(name, { ts: Date.now(), values, diff: {}, reveal: keys });
   }
-  dialog.showMessageBox({
-    title: `${name} -- current values${reveal ? ' (revealed)' : ' (masked)'}`,
-    message: lines.join('\n') || '(no values tracked yet)',
-    buttons: reveal ? ['Close'] : ['Close', 'Unmask'],
-  }).then((res) => {
-    if (!reveal && res.response === 1) showPreview(name, true);
-  });
+  showScrollableWindow(
+    `${name} -- current values${reveal ? ' (revealed)' : ' (masked)'}`,
+    lines,
+    reveal ? null : () => showPreview(name, true),
+  );
 }
 
 // Electron's main process has no controlling terminal, so `gh auth login`
