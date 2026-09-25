@@ -1,5 +1,5 @@
 {
-  "name": "envsync",
+  "name": "p2p-envsync",
   "version": "0.1.0",
   "description": "P2P encrypted .env sync for dev teams — LAN-first, offline-first, zero server",
   "keywords": ["env", "dotenv", "sync", "p2p", "encrypted", "secrets", "team", "developer-tools"],
