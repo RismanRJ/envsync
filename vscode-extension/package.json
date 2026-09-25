@@ -1,0 +1,37 @@
+{
+  "name": "envsync-vscode",
+  "displayName": "EnvSync",
+  "description": "Status bar sync state + vault/review/reveal commands for EnvSync rooms",
+  "version": "0.1.0",
+  "publisher": "envsync-local",
+  "license": "MIT",
+  "engines": { "vscode": "^1.85.0" },
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "categories": ["Other"],
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0"
+  },
+  "contributes": {
+    "commands": [
+      { "command": "envsync.vaultThisFile", "title": "EnvSync: Add This File to Vault", "icon": "$(shield)" },
+      { "command": "envsync.review", "title": "EnvSync: Review Last Change", "icon": "$(check)" },
+      { "command": "envsync.reveal", "title": "EnvSync: Reveal Last Change" },
+      { "command": "envsync.joinRoom", "title": "EnvSync: Join Room" }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "envsync.vaultThisFile",
+          "when": "resourceFilename =~ /(^|\\.)env(\\.|$)/ && !envsync.trackedActive",
+          "group": "navigation"
+        },
+        {
+          "command": "envsync.review",
+          "when": "resourceFilename =~ /(^|\\.)env(\\.|$)/ && envsync.trackedActive || resourceFilename == '.envsync.yml'",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}

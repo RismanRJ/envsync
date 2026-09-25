@@ -1,0 +1,33 @@
+{
+  "name": "envsync",
+  "version": "0.1.0",
+  "description": "P2P encrypted .env sync for dev teams — LAN-first, offline-first, zero server",
+  "keywords": ["env", "dotenv", "sync", "p2p", "encrypted", "secrets", "team", "developer-tools"],
+  "author": "RismanRJ",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "envsync": "./cli.js"
+  },
+  "main": "tray/main.js",
+  "files": ["lib.js", "cli.js", "net.js", "backup.js", "notify.js", "mesh.js", "signal.js", "tray/", "LICENSE"],
+  "scripts": {
+    "test": "node --test test/",
+    "tray": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RismanRJ/envsync.git"
+  },
+  "homepage": "https://github.com/RismanRJ/envsync#readme",
+  "bugs": "https://github.com/RismanRJ/envsync/issues",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "electron": "^41.7.1"
+  }
+}

@@ -1,0 +1,8 @@
+test/
+tray/
+vscode-extension/
+.github/
+.gitignore
+TODO.md
+*.vsix
+.DS_Store
