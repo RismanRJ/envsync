@@ -17,10 +17,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/RismanRJ/envsync.git"
+    "url": "https://github.com/Rismanj21/envsync.git"
   },
-  "homepage": "https://github.com/RismanRJ/envsync#readme",
-  "bugs": "https://github.com/RismanRJ/envsync/issues",
+  "homepage": "https://github.com/Rismanj21/envsync#readme",
+  "bugs": "https://github.com/Rismanj21/envsync/issues",
   "engines": {
     "node": ">=18.0.0"
   },
