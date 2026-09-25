@@ -9,7 +9,6 @@
   "bin": {
     "envsync": "./cli.js"
   },
-  "main": "tray/main.js",
   "files": ["lib.js", "cli.js", "net.js", "backup.js", "notify.js", "mesh.js", "signal.js", "tray/", "LICENSE"],
   "scripts": {
     "test": "node --test test/",
