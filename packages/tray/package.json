@@ -1,6 +1,6 @@
 {
   "name": "p2p-envsync-tray",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Menu bar tray app for p2p-envsync — create/join rooms, sync, preview env, GitHub backup",
   "keywords": ["envsync", "tray", "electron", "menu-bar", "env", "sync"],
   "author": "RismanRJ",
@@ -9,7 +9,10 @@
   "bin": {
     "envsync-tray": "./launch.js"
   },
-  "files": ["launch.js"],
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "files": ["launch.js", "postinstall.js"],
   "repository": {
     "type": "git",
     "url": "https://github.com/RismanRJ/envsync.git",
