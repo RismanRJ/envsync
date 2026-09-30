@@ -2,7 +2,9 @@
 
 P2P, offline-first, encrypted `.env` sync for dev teams — no central server, LAN multicast for instant sync, GitHub as encrypted backup/relay.
 
-![npm](https://img.shields.io/badge/npm-envsync-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+**Website:** [p2penvsync.vercel.app](https://p2penvsync.vercel.app)
+
+![npm](https://img.shields.io/badge/npm-p2p--envsync-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 ## Install
 
