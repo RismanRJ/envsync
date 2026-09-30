@@ -4,3 +4,7 @@ node_modules/
 *.vsix
 .DS_Store
 ExportOptions.textClipping
+
+assets/
+deliverables/
+BRIEF.md
