@@ -1,6 +1,6 @@
 {
   "name": "p2p-envsync",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "P2P encrypted .env sync for dev teams — LAN-first, offline-first, zero server",
   "keywords": [
     "env",
