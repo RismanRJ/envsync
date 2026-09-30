@@ -26,6 +26,7 @@ const ICONS = {
 };
 
 const running = new Map(); // room name -> child process
+let isQuitting = false;
 
 function toggleSync(name) {
   if (running.has(name)) {
@@ -106,13 +107,14 @@ function showScrollableWindow(title, lines, onUnmask) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const unmaskBtn = onUnmask ? `<button onclick="require('electron').ipcRenderer.send('unmask')" style="margin-top:12px;padding:6px 16px;cursor:pointer">Unmask</button>` : '';
   const html = `<html><head><title>${esc(title)}</title><style>
-    body{font-family:monospace;font-size:13px;padding:16px;margin:0;background:#1e1e1e;color:#d4d4d4;word-break:break-all}
+    body{font-family:monospace;font-size:13px;padding:16px;margin:0;background:#1e1e1e;color:#d4d4d4;word-break:break-all;overflow:auto;height:100vh;box-sizing:border-box}
     pre{white-space:pre-wrap;margin:0}
     button{background:#333;color:#d4d4d4;border:1px solid #555;border-radius:4px;font-size:13px}
     button:hover{background:#444}
-  </style></head><body><pre>${lines.map(esc).join('\n') || '(empty)'}</pre>${unmaskBtn}</body></html>`;
+    .topbar{position:sticky;top:-16px;margin:-16px -16px 12px;padding:8px 16px;background:#1e1e1e;border-bottom:1px solid #444;display:flex;justify-content:flex-end}
+  </style></head><body><div class="topbar"><button onclick="window.close()" style="padding:4px 12px;cursor:pointer">Close</button></div><pre>${lines.map(esc).join('\n') || '(empty)'}</pre>${unmaskBtn}</body></html>`;
   const win = new BrowserWindow({ width: 620, height: 500, title, webPreferences: { nodeIntegration: true, contextIsolation: false } });
-  win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(html)}`);
+  win.loadURL(`data:text/html;base64,${Buffer.from(html).toString('base64')}`);
   win.setMenuBarVisibility(false);
   if (onUnmask) {
     const { ipcMain } = require('electron');
@@ -281,7 +283,7 @@ function buildMenu(tray) {
   }
 
   template.push({ type: 'separator' });
-  template.push({ label: 'Quit', click: () => { for (const child of running.values()) child.kill(); app.quit(); } });
+  template.push({ label: 'Quit', click: () => app.quit() });
 
   tray.setContextMenu(Menu.buildFromTemplate(template));
 }
@@ -290,7 +292,11 @@ app.whenReady().then(() => {
   if (process.platform === 'darwin') app.dock?.hide();
   const tray = new Tray(ICONS.gray);
   buildMenu(tray);
-  setInterval(() => buildMenu(tray), REFRESH_MS);
+  setInterval(() => buildMenu(tray), REFRESH_MS).unref();
 });
 
-app.on('window-all-closed', (e) => e.preventDefault());
+app.on('before-quit', () => {
+  isQuitting = true;
+  for (const child of running.values()) child.kill();
+});
+app.on('window-all-closed', (e) => { if (!isQuitting) e.preventDefault(); });
